@@ -1,0 +1,8 @@
+; $Id$
+name = Quick Combobox form Element
+description = Defines new form element - Quick Combobox
+core = 6.x
+
+version = "6.x-1.0"
+core = 6.x
+dependencies[] = jquery_livequery

@@ -1,0 +1,206 @@
+<?php
+
+define( 'QCOMBOBOX_ICON_WIDTH', 17 );
+define( 'QCOMBOBOX_IDQUERY_SUFFIX', '_byid');
+define( 'QCOMBOBOX_IDQUERY_SUFFIX_LENGTH', 5);
+/*
+ * Implementation of hook_menu(  )
+ */
+function qcombobox_menu() {
+    $items = array(  );
+
+    // callback for retrieve data function, in JSON format
+    // Request is done via url in form: qcombobox/{json,xml - output format}/{module - data provider, could be NULL}/{information type request}(/variable list of addition parameters)?
+	$items['qcombobox/%/%/%'] = array(
+		'page callback' => 'qcombobox_retrieve',
+		'page arguments' => array(1,2,3),
+		'access callback' => TRUE, //We allow anonymous forms, security checks is done later, on hook_qcombobox_source( ) side
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+}
+
+/*
+ * Load required JS/CSS components
+ */
+function qcombobox_js_load(  ) {
+    $path = drupal_get_path( 'module', 'qcombobox' );
+    drupal_add_js( $path . '/js/jquery.quickselect.js' ); //FIXME, change to packed version on release
+    drupal_add_js( $path . '/js/quicksilver.js' );
+    drupal_add_css( $path . '/css/jquery.quickselect.css' ); //Base stylesheet
+}
+
+/*
+ * Implementation of hook_elements(  )
+*/
+function qcombobox_elements() {
+  $type['qcombobox'] = array( 
+       '#input' => TRUE,
+       '#options_source' => array(),
+       '#emptyText' =>  t( 'Choose a value..' ),
+       '#autoFill' => FALSE,
+       '#width' => '129', //Icon width is constant - 17px
+       '#extra_params' => array(), //Array of key-value settings passed to JS widget (client side)
+       '#filter'  => NULL, //Additional filter parameter to check key value of options_source (like in maskedinput), currently used in generator SQL
+    );
+  return $type;
+}
+
+
+
+/**
+ * Implementation of hook_theme().
+ * 
+ * This lets us tell Drupal about our theme functions and their arguments.
+ */
+function qcombobox_theme(  ){
+  return array(
+    'qcombobox' => array(
+      'arguments' => array('element'),
+    ),
+  );
+}
+
+
+function qcombobox_get_value( $element, $id=NULL ){
+  if (isset($element['#options_source']) && $element['#options_source']) {
+    //request text value for requested option
+    $args = $element['#options_source'];
+    array_unshift( $args, 'byid' ); //push format
+    $args[2] .= QCOMBOBOX_IDQUERY_SUFFIX;
+    if ( isset( $_GET['qsearch'] ) ) { $save_qsearch = $_GET['qsearch']; }
+    $_GET['qsearch'] = isset($id) ? $id : $element['#value'];
+    if ( count( $args ) < 3 ) {
+        var_dump( $args, $element );die( 'as' );
+    }
+    $text_value = call_user_func_array( 'qcombobox_retrieve', $args );
+
+    if ( isset( $save_qsearch) ) { $_GET['qsearch'] = $save_qsearch; } else { unset ( $_GET['qsearch'] );}
+    unset( $save_qsearch );
+
+    if(!isset($id) && empty($element['#value'])) {
+      if($element['#emptyText'] != t('Choose a value..')) {
+        return $element['#emptyText'];
+      }
+    }
+
+    return $text_value;
+  } elseif (isset($element['#options'])) {
+    $index = isset($id) ? $id : $element['#value'];
+    return $element['#options'][$index];
+  }
+}
+
+/**
+ * Theme function to format the output of qcombobox form element type.
+ *
+ */
+function theme_qcombobox(  $element ){
+  static $configs = array(  );
+  jquery_livequery_js_load(  );
+  qcombobox_js_load( );
+
+
+  $size = empty($element['#size']) ? '' : ' size="'. $element['#size'] .'"';
+  $maxlength = empty($element['#maxlength']) ? '' : ' maxlength="'. $element['#maxlength'] .'"';
+  $class = array('form-text');
+  $extra = '';
+  $output = '';
+  $params = is_array($element['#extra_params']) ? $element['#extra_params'] : array();
+
+  if ($element['#id']) {
+    $config = array(
+        'match' => 'substring',
+        'autoSelectFirst' => 'false',
+        'autoFill' => ( $element['#autoFill'] ? 'true' : 'false' ),
+        'mustMatch' => 'true',
+        'width' => ( $element['#width'] + QCOMBOBOX_ICON_WIDTH - 3),
+        );
+
+    if ($element['#options_source'] && is_array( $element['#options_source'] )) {
+      $url = check_url(url(  'qcombobox/json/' . implode( '/', $element['#options_source']), array('absolute' => FALSE)));
+      $config['ajax']       = $url;
+      $config['ajaxParams'] = $params;
+    }elseif ($element['#options']) {
+      $option_list = array();
+      foreach ($element['#options'] as $k=>$v) {
+        $option_list[] = array(
+            $v, $k
+        );
+      }
+      $config['data']       = $option_list;
+    }
+
+    $config_key = array_search( $config, $configs );
+    if ( $config_key === FALSE ) {
+      $configs[] = $config;
+      $config_key = count( $configs ) - 1;
+      drupal_add_js( array( 'qcombobox'=>array( $config_key=>$config ) ), 'setting' );
+    }
+
+    if (isset($element['#field_prefix'])) {
+      $output .= '<span class="field-prefix">' . $element['#field_prefix'] . '</span>';
+    }
+
+    //request text value for requested option
+    $text_value = qcombobox_get_value( $element );
+
+    if ( $element['#attributes']['readonly'] ) {
+      $output .= '<input disabled type="text" value="'. check_plain($text_value) .'"'. drupal_attributes($element['#attributes']) . $size .' />';
+      $output .= '<input type="hidden" name="'. $element['#name'] .'" id="'. $element['#id'] .'" value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
+    } else {
+      $output .= '<div class="qcombobox" style="width:' . ( $element['#width'] + QCOMBOBOX_ICON_WIDTH) . 'px" >';
+      $output .= '<input alt="' . $config_key . '" type="text"'. $maxlength .' name="quickselect-'. $element['#name'] .'" id="quickselect-'. $element['#id'] .'"'. $size .' value="'. check_plain($text_value) .'"'. drupal_attributes($element['#attributes']) .'  style="width:' . $element['#width'] . 'px" />';
+      $output .= '<input alt="' . $config_key . '" type="hidden" name="'. $element['#name'] .'" id="'. $element['#id'] .'" value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
+      $output .= '<div class="icon" style="left:' . $element['#width'] . 'px" ></div></div>';
+    }
+    if (isset($element['#field_suffix'])) {
+      $output .= ' <span class="field-suffix">'. $element['#field_suffix'] .'</span>';
+    }
+  }
+
+  return  theme('form_element', $element, $output) . $extra;
+}
+
+function qcombobox_retrieve( $format, $module, $request ) {
+    $output = array();
+    $search_str = trim( $_GET['qsearch']);
+    //Get variable argument list
+    $args = func_get_args( );
+    
+    //Should we call specific module, or broadcast request ?
+    $module_list = module_list(  );
+    if ( in_array( $module, $module_list ) ) {
+        $args[0] = 'qcombobox_source';
+        $args[1] = $request;
+        $args[2] = $search_str;
+        array_unshift( $args, $module );
+        $result = call_user_func_array( 'module_invoke', $args );
+    } else {
+        $args[0] = 'qcombobox_source'; //Hook_name
+        $args[1] = $request; //request type
+        $args[2] = $search_str; //partial search string
+        $result = call_user_func_array( 'module_invoke_all', $args );
+    }
+    if ( $format == 'json' ) {
+        if ( !is_array( $result ) ) {
+            $result = array(  );
+        }
+        foreach ( $result as $key=>$value ) {
+            if (is_array($value)) {
+              foreach ($value as $subvalue) {
+                $output[] = array( $subvalue, $key ); 
+              }
+            } else {
+              $output[] = array( $value, $key ); 
+            }
+        }
+
+        drupal_json( $output );
+        module_invoke_all( 'exit' );
+        exit(  );
+    } elseif ( $format == 'byid' ) {
+        return $result;
+    }
+}
