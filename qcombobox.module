@@ -109,7 +109,7 @@ function theme_qcombobox(  $element ){
   $output = '';
   $params = is_array($element['#extra_params']) ? $element['#extra_params'] : array();
 
-  if ($element['#id']) {
+  if (isset($element['#id'])) {
     $config = array(
         'match' => 'substring',
         'autoSelectFirst' => 'false',
@@ -146,7 +146,7 @@ function theme_qcombobox(  $element ){
     //request text value for requested option
     $text_value = qcombobox_get_value( $element );
 
-    if ( $element['#attributes']['readonly'] ) {
+    if ( isset($element['#attributes']['readonly']) && $element['#attributes']['readonly'] ) {
       $output .= '<input disabled type="text" value="'. check_plain($text_value) .'"'. drupal_attributes($element['#attributes']) . $size .' />';
       $output .= '<input type="hidden" name="'. $element['#name'] .'" id="'. $element['#id'] .'" value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
     } else {
