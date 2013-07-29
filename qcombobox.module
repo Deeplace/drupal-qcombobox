@@ -35,7 +35,7 @@ function qcombobox_js_load(  ) {
  * Implementation of hook_elements(  )
 */
 function qcombobox_elements() {
-  $type['qcombobox'] = array( 
+  $type['qcombobox'] = array(
        '#input' => TRUE,
        '#options_source' => array(),
        '#emptyText' =>  t( 'Choose a value..' ),
@@ -51,7 +51,7 @@ function qcombobox_elements() {
 
 /**
  * Implementation of hook_theme().
- * 
+ *
  * This lets us tell Drupal about our theme functions and their arguments.
  */
 function qcombobox_theme(  ){
@@ -71,9 +71,7 @@ function qcombobox_get_value( $element, $id=NULL ){
     $args[2] .= QCOMBOBOX_IDQUERY_SUFFIX;
     if ( isset( $_GET['qsearch'] ) ) { $save_qsearch = $_GET['qsearch']; }
     $_GET['qsearch'] = isset($id) ? $id : $element['#value'];
-    if ( count( $args ) < 3 ) {
-        var_dump( $args, $element );die( 'as' );
-    }
+
     $text_value = call_user_func_array( 'qcombobox_retrieve', $args );
 
     if ( isset( $save_qsearch) ) { $_GET['qsearch'] = $save_qsearch; } else { unset ( $_GET['qsearch'] );}
@@ -168,7 +166,7 @@ function qcombobox_retrieve( $format, $module, $request ) {
     $search_str = trim( $_GET['qsearch']);
     //Get variable argument list
     $args = func_get_args( );
-    
+
     //Should we call specific module, or broadcast request ?
     $module_list = module_list(  );
     if ( in_array( $module, $module_list ) ) {
@@ -190,10 +188,10 @@ function qcombobox_retrieve( $format, $module, $request ) {
         foreach ( $result as $key=>$value ) {
             if (is_array($value)) {
               foreach ($value as $subvalue) {
-                $output[] = array( $subvalue, $key ); 
+                $output[] = array( $subvalue, $key );
               }
             } else {
-              $output[] = array( $value, $key ); 
+              $output[] = array( $value, $key );
             }
         }
 
