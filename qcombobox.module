@@ -88,7 +88,7 @@ function qcombobox_get_value( $element, $id=NULL ){
     return $text_value;
   } elseif (isset($element['#options'])) {
     $index = isset($id) ? $id : $element['#value'];
-    return $element['#options'][$index];
+    return array_key_exists($index, $element['#options']) ? $element['#options'][$index] : NULL;
   }
 }
 
@@ -107,9 +107,9 @@ function theme_qcombobox(  $element ){
   $class = array('form-text');
   $extra = '';
   $output = '';
-  $params = is_array($element['#extra_params']) ? $element['#extra_params'] : array();
+  $params = (array_key_exists('#extra_params', $element) && is_array($element['#extra_params'])) ? $element['#extra_params'] : array();
 
-  if (isset($element['#id'])) {
+  if (array_key_exists('#id', $element)) {
     $config = array(
         'match' => 'substring',
         'autoSelectFirst' => 'false',
@@ -118,7 +118,7 @@ function theme_qcombobox(  $element ){
         'width' => ( $element['#width'] + QCOMBOBOX_ICON_WIDTH - 3),
         );
 
-    if ($element['#options_source'] && is_array( $element['#options_source'] )) {
+    if (isset($element['#options_source']) && is_array( $element['#options_source'] )) {
       $url = check_url(url(  'qcombobox/json/' . implode( '/', $element['#options_source']), array('absolute' => FALSE)));
       $config['ajax']       = $url;
       $config['ajaxParams'] = $params;
@@ -146,7 +146,7 @@ function theme_qcombobox(  $element ){
     //request text value for requested option
     $text_value = qcombobox_get_value( $element );
 
-    if ( isset($element['#attributes']['readonly']) && $element['#attributes']['readonly'] ) {
+    if ( array_key_exists('readonly', $element['#attributes']) && $element['#attributes']['readonly'] ) {
       $output .= '<input disabled type="text" value="'. check_plain($text_value) .'"'. drupal_attributes($element['#attributes']) . $size .' />';
       $output .= '<input type="hidden" name="'. $element['#name'] .'" id="'. $element['#id'] .'" value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
     } else {
