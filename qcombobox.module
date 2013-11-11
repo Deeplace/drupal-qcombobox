@@ -190,10 +190,10 @@ function qcombobox_retrieve( $format, $module, $request ) {
         foreach ( $result as $key=>$value ) {
             if (is_array($value)) {
               foreach ($value as $subvalue) {
-                $output[] = array( $subvalue, $key ); 
+                $output[] = array( $subvalue, (string)$key ); 
               }
             } else {
-              $output[] = array( $value, $key ); 
+              $output[] = array( $value, (string)$key ); 
             }
         }
 
