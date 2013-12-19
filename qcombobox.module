@@ -149,7 +149,7 @@ function theme_qcombobox(  $element ){
       $output .= '<input type="hidden" name="'. $element['#name'] .'" id="'. $element['#id'] .'" value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
     } else {
       $output .= '<div class="qcombobox" style="width:' . ( $element['#width'] + QCOMBOBOX_ICON_WIDTH) . 'px" >';
-      $output .= '<input alt="' . $config_key . '" type="text"'. $maxlength .' name="quickselect-'. $element['#name'] .'" id="quickselect-'. $element['#id'] .'"'. $size .' value="'. check_plain($text_value) .'"'. drupal_attributes($element['#attributes']) .'  style="width:' . $element['#width'] . 'px" />';
+      $output .= '<input alt="' . $config_key . '" type="text"'. $maxlength .' name="quickselect-'. $element['#name'] .'" id="quickselect-'. $element['#id'] .'"'. $size .' value="'. check_plain($text_value) .'"'. drupal_attributes($element['#attributes']) .'  style="width:' . $element['#width'] . 'px" autocomplete="off" />';
       $output .= '<input alt="' . $config_key . '" type="hidden" name="'. $element['#name'] .'" id="'. $element['#id'] .'" value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
       $output .= '<div class="icon" style="left:' . $element['#width'] . 'px" ></div></div>';
     }
