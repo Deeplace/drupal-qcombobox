@@ -480,7 +480,8 @@ $( "div.qcombobox input:hidden" ).livequery( function() {
         mustMatch: settings.mustMatch,
         width: settings.width,
         onItemSelect: function(item, input) { 
-            $(input).change();  
+            $(input).change();
+            $(hinput).change();
             }
         };
       if (settings.ajax !== undefined) {
