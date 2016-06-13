@@ -51,7 +51,7 @@ var QuickSelect;
         return item.label || (typeof(item)==='string' ? item : item[0]) || ''; // hash:item.label; string:item; array:item[0]
       };
       var getValues = function(item){
-        return item.values || (item.value ? [item.value] : (typeof(item)==='string' ? [item] : item)) || []; // hash:item.values || item.value; string:item; array:item[1..end]
+        return (item.value ? [item.value] : (typeof(item)==='string' ? [item] : item)) || []; // hash:item.values || item.value; string:item; array:item[1..end]
       };
      	var moveSelect = function(step_or_li){
     		var lis = $('li', results_list);
