@@ -1,109 +1,100 @@
 .quickselect_results {
-	padding: 0px;
-	border: 1px solid WindowFrame;
-	background-color: Window;
-/*	overflow: hidden;*/
-/* Custom part*/
-    height:200px;
-    overflow-y:scroll;
-    z-index:9999
+  padding: 0px;
+  border: 1px solid WindowFrame;
+  background-color: Window;
+  height:200px;
+  overflow-y:scroll;
+  z-index:9999
 }
 
 .quickselect_results ul {
-	width: 100%;
-	list-style-position: outside;
-	list-style: none;
-	padding: 0;
-	margin: 0;
+  width: 100%;
+  list-style-position: outside;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .quickselect_results iframe {
-	display:none;/*sorry for IE5*/
-	display/**/:block;/*sorry for IE5*/
-	position:absolute;
-	top:0;
-	left:0;
-	z-index:-1;
-	filter:mask();
-	width:3000px;
-	height:3000px;
+  display:none; /*sorry for IE5*/
+  display/**/:block; /*sorry for IE5*/
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:-1;
+  filter:mask();
+  width:3000px;
+  height:3000px;
 }
 
 .quickselect_results li {
-	margin: 0px;
-	padding: 2px 5px;
-	cursor: pointer;
-	display: block;
-	width: 100%;
-	font: menu;
-	font-size: 12px;
-	overflow: hidden;
+  margin: 0px;
+  padding: 2px 5px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  font: menu;
+  font-size: 12px;
+  overflow: hidden;
 }
 
 .quickselect_loading {
-	background : Window url('./indicator.gif') right center no-repeat;
+  background : Window url('./indicator.gif') right center no-repeat;
 }
 
 .quickselect_selected {
-	background-color: Highlight;
-	color: HighlightText;
+  background-color: Highlight;
+  color: HighlightText;
 }
 
 /* Customized  */
 
 /*wrapper of all elements*/
 div.qcombobox {
-    position:relative;
-    left: 0px;
-    top: 0px;
+  position:relative;
+  left: 0px;
+  top: 0px;
 }
-
 
 /*text input*/
 .qcombobox input {
-    position: absolute;
+  position: absolute;
 }
-
 
 /*icon*/
 .qcombobox div.icon {
-    position:absolute;
+  position:absolute;
 }
 
 div.qcombobox {
-    white-space: nowrap;
-    height: 21px;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    width: 146px;
+  white-space: nowrap;
+  height: 21px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  width: 146px;
 }
 
 div.qcombobox input {
-    margin: 0 0 0 0;
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
-    padding:1px 3px;
-/*    background:#fff url(text-bg.gif) repeat-x 0 0; */
-    border:1px solid #B5B8C8;
-    height: 18px;
-    line-height:18px;
-    vertical-align:middle; 
-    left: 0px;
-    top: 0px; 
-    width: 129px;  
-
+  margin: 0 0 0 0;
+  font:normal 12px tahoma, arial, helvetica, sans-serif;
+  padding:1px 3px;
+  border:1px solid #B5B8C8;
+  height: 18px;
+  line-height:18px;
+  vertical-align:middle;
+  left: 0px;
+  top: 0px;
+  width: 129px;
 }
 
 div.qcombobox div.icon {
-    width:17px;
-    height:21px;
-    border: 0;
-    background:transparent url(trigger.gif) no-repeat 0 0;
-    cursor:pointer;
-    border-bottom: 1px solid #B5B8C8;
-    top:0px;
-    left: 129px; 
-
+  width:17px;
+  height:21px;
+  border: 0;
+  background:transparent url(trigger.gif) no-repeat 0 0;
+  cursor:pointer;
+  border-bottom: 1px solid #B5B8C8;
+  top:0px;
+  left: 129px;
 }
-
-
