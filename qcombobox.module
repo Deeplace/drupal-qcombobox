@@ -87,7 +87,7 @@ function qcombobox_get_value($element, $id = NULL) {
       $save_qsearch = $_GET['qsearch'];
     }
 
-    $_GET['qsearch'] = isset($id) ? $id : $element['#value'];
+    $_GET['qsearch'] = isset($id) ? $id : (isset($element['#value']) ? $element['#value'] : NULL);
 
     $text_value = call_user_func_array('qcombobox_retrieve', $args);
 
@@ -100,7 +100,7 @@ function qcombobox_get_value($element, $id = NULL) {
 
     unset($save_qsearch);
 
-    if (!isset($id) && empty($element['#value'])) {
+    if (!isset($id) && empty($element['#value']) && isset($element['#emptyText'])) {
       if ($element['#emptyText'] != t('Choose a value..')) {
         return $element['#emptyText'];
       }
