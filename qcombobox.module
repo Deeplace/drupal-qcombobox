@@ -216,13 +216,14 @@ function qcombobox_retrieve($format, $module, $request) {
       $result = array();
     }
     foreach ($result as $key => $value) {
+      $key = (string) $key;
       if (is_array($value)) {
         foreach ($value as $subvalue) {
-          $output[] = array($subvalue, (string)$key);
+          $output[] = array($subvalue, $key, 'className' => ('qcombobox-result-' . $key));
         }
       }
       else {
-        $output[] = array($value, (string)$key);
+        $output[] = array($value, $key, 'className' => ('qcombobox-result-' . $key));
       }
     }
 
