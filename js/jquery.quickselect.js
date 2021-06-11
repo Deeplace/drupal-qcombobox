@@ -328,6 +328,10 @@ var QuickSelect;
       }
 
     });
+    // FIXME: allow access to input element from inside QuickSelect.finderFunction.ajax eval expression.
+    self.getInput = function () {
+      return $input_element;
+    };
   };
 
   QuickSelect.matchers = {
@@ -412,7 +416,7 @@ var QuickSelect;
       for (var i in this.options.ajaxParams) {
         if (this.options.ajaxParams.hasOwnProperty(i)) {
           //FIXME: replace fixed values with realtime ones
-          if (this.options.ajaxParams[i].match(/\$\(.*\)/)) {
+          if (this.options.ajaxParams[i].match(/(\$\(.*\)|this)/)) {
             url += "&" + i + "=" + encodeURI(eval(this.options.ajaxParams[i]));
           } else {
             url += "&" + i + "=" + encodeURI(this.options.ajaxParams[i]);
