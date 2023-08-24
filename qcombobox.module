@@ -127,6 +127,7 @@ function theme_qcombobox($variables) {
   $extra = '';
   $output = '';
   $params = (array_key_exists('#extra_params', $element) && is_array($element['#extra_params'])) ? $element['#extra_params'] : array();
+  _form_set_class($element, $class);
 
   if (array_key_exists('#id', $element)) {
     $config = array(
