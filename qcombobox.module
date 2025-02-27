@@ -138,7 +138,7 @@ function theme_qcombobox($variables) {
       'width' => ($element['#width'] + QCOMBOBOX_ICON_WIDTH - 3),
     );
 
-    if (isset($element['#options_source']) && is_array($element['#options_source'])) {
+    if (isset($element['#options_source']) && is_array($element['#options_source']) && $element['#options_source']) {
       $url = check_url(url('qcombobox/json/' . implode('/', $element['#options_source']), array('absolute' => FALSE)));
       $config['ajax'] = $url;
       $config['ajaxParams'] = $params;
