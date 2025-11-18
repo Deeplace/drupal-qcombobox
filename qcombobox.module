@@ -188,7 +188,7 @@ function theme_qcombobox($variables) {
 
 function qcombobox_retrieve($format, $module, $request) {
   $output = array();
-  $search_str = trim($_GET['qsearch']);
+  $search_str = trim($_GET['qsearch'] ?? '');
   // Get variable argument list
   $args = func_get_args();
 
