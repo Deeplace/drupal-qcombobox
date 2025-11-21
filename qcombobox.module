@@ -88,7 +88,7 @@ function qcombobox_get_value($element, $id = NULL) {
     }
 
     $_GET['qsearch'] = $id ?? ($element['#value'] ?? NULL);
-    $text_value = $_GET['qsearch'] ? call_user_func_array('qcombobox_retrieve', $args) : '';
+    $text_value = (isset($_GET['qsearch']) && strlen($_GET['qsearch'])) ? call_user_func_array('qcombobox_retrieve', $args) : '';
 
     if (isset($save_qsearch)) {
       $_GET['qsearch'] = $save_qsearch;
