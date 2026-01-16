@@ -246,24 +246,29 @@ function qcombobox_retrieve($format, $module, $request) {
  * Implementation of hook_validate().
  */
 function qcombobox_validate($element, &$form_state) {
-    if (isset($element['#options_source']) && $element['#options_source']) {
-      $options_source = $element['#options_source'];
-      $module_list = module_list();
-      $module = array_shift($options_source);
-      $request = array_shift($options_source);
-      if (in_array($module, $module_list)) {
-        $options = call_user_func_array('module_invoke', array_merge([
-          $module,
-          'qcombobox_source',
-          $request,
-          '',
-        ], $options_source));
-      }
-    } elseif (isset($element['#options'])) {
-      $options = $element['#options'];
+  if (!empty($element['#extra_params'])) {
+    // Don't validate when extra params are set (used for dynamic filtering)
+    return;
+  }
+  if (isset($element['#options_source']) && $element['#options_source']) {
+    $options_source = $element['#options_source'];
+    $module_list = module_list();
+    $module = array_shift($options_source);
+    $request = array_shift($options_source);
+    if (in_array($module, $module_list)) {
+      $options = call_user_func_array('module_invoke', array_merge([
+        $module,
+        'qcombobox_source',
+        $request,
+        '',
+      ], $options_source));
     }
-    if (($element['#required'] || strlen($element['#value'])) && !isset($options[$element['#value']]))  {
-      $value = qcombobox_get_value($element, $element['#value']);
-      form_set_error($element['#name'], t('The selected value "@value" is not valid.', array('@value' => $value)));
-    }
+  }
+  elseif (isset($element['#options'])) {
+    $options = $element['#options'];
+  }
+  if (($element['#required'] || strlen($element['#value'])) && !isset($options[$element['#value']])) {
+    $value = qcombobox_get_value($element, $element['#value']);
+    form_set_error($element['#name'], t('The selected value "@value" is not valid.', ['@value' => $value]));
+  }
 }
