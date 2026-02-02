@@ -1,6 +1,7 @@
 <?php
 define('QCOMBOBOX_ICON_WIDTH', 17);
 define('QCOMBOBOX_IDQUERY_SUFFIX', '_byid');
+define('QCOMBOBOX_VALIDATE_SUFFIX', '_validate');
 define('QCOMBOBOX_IDQUERY_SUFFIX_LENGTH', 5);
 
 /*
@@ -260,20 +261,22 @@ function qcombobox_validate($element, &$form_state) {
       $module = array_shift($options_source);
       $request = array_shift($options_source);
       if (in_array($module, $module_list)) {
-        $options = call_user_func_array('module_invoke', array_merge([
+        $text_value = call_user_func_array('module_invoke', array_merge([
           $module,
           'qcombobox_source',
-          $request,
-          '',
+          $request . '_validate',
+          $element['#value'],
         ], $options_source));
+        if ($text_value === FALSE || $text_value === NULL) {
+          form_set_error($element['#name'], t('The selected value "@value" is not valid.', ['@value' => $element['#value']]));
+        }
       }
     }
     elseif (isset($element['#options'])) {
       $options = $element['#options'];
-    }
-    if (!isset($options[$element['#value']])) {
-      $value = qcombobox_get_value($element, $element['#value']);
-      form_set_error($element['#name'], t('The selected value "@value" is not valid.', ['@value' => $value]));
+      if (!isset($options[$element['#value']])) {
+        form_set_error($element['#name'], t('The selected value "@value" is not valid.', ['@value' => $element['#value']]));
+      }
     }
   }
 }
