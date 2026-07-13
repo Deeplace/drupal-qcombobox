@@ -247,6 +247,10 @@ function qcombobox_retrieve($format, $module, $request) {
  * Implementation of hook_validate().
  */
 function qcombobox_validate($element, &$form_state) {
+  // Don't validate stray form elements used in tablegrid declarations,
+  if (!isset($element['#name'])) {
+    return;
+  }
   if (!empty($element['#extra_params']) ||
     (!empty($element['#attributes']['readonly']) && !empty($element['#replied_document_field']))
   ) {
@@ -268,14 +272,14 @@ function qcombobox_validate($element, &$form_state) {
           $element['#value'],
         ], $options_source));
         if ($text_value === FALSE || $text_value === NULL) {
-          form_set_error($element['#name'], t('The selected value "@value" is not valid.', ['@value' => $element['#value']]));
+          form_set_error($element['#name'], t('The selected option "@value" is not allowed for field @title.', ['@value' => $element['#value'], '@title' => $element['#title']]));
         }
       }
     }
     elseif (isset($element['#options'])) {
       $options = $element['#options'];
       if (!isset($options[$element['#value']])) {
-        form_set_error($element['#name'], t('The selected value "@value" is not valid.', ['@value' => $element['#value']]));
+        form_set_error($element['#name'], t('The selected option "@value" is not allowed for field @title.', ['@value' => $element['#value'], '@title' => $element['#title']]));
       }
     }
   }
